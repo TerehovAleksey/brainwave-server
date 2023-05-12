@@ -1,7 +1,4 @@
-﻿using HotChocolate;
-using BrainWave.Common.Middlewares;
-
-namespace BrainWave.Common.Attributes;
+﻿namespace BrainWave.Common.Attributes;
 
 [AttributeUsage(AttributeTargets.Parameter)]
 public class UserAttribute : GlobalStateAttribute
