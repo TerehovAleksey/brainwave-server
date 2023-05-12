@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainWaveAPI", "BrainWaveAPI\BrainWaveAPI.csproj", "{C231D77B-B4CB-459A-B54F-F64E3FF43A04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrainWaveAPI", "BrainWaveAPI\BrainWaveAPI.csproj", "{C231D77B-B4CB-459A-B54F-F64E3FF43A04}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrainWave.BM.Data", "BrainWave.BM.Data\BrainWave.BM.Data.csproj", "{4711B6A3-D891-4645-B259-EE9EDDCF9371}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainWave.Common", "BrainWave.Common\BrainWave.Common.csproj", "{84DD8D3E-8036-447D-B41B-01CE4B4C2DE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{C231D77B-B4CB-459A-B54F-F64E3FF43A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C231D77B-B4CB-459A-B54F-F64E3FF43A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C231D77B-B4CB-459A-B54F-F64E3FF43A04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4711B6A3-D891-4645-B259-EE9EDDCF9371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4711B6A3-D891-4645-B259-EE9EDDCF9371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4711B6A3-D891-4645-B259-EE9EDDCF9371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4711B6A3-D891-4645-B259-EE9EDDCF9371}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84DD8D3E-8036-447D-B41B-01CE4B4C2DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84DD8D3E-8036-447D-B41B-01CE4B4C2DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84DD8D3E-8036-447D-B41B-01CE4B4C2DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84DD8D3E-8036-447D-B41B-01CE4B4C2DE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
