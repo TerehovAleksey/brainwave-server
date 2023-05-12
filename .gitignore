@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/src/BrainWaveAPI/appsettings.Production.json
+/src/BrainWaveAPI/appsettings.Development.json
