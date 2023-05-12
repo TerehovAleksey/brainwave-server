@@ -1,8 +1,4 @@
-﻿using BrainWave.Common.Models;
-using HotChocolate.Resolvers;
-using System.Security.Claims;
-
-namespace BrainWave.Common.Middlewares;
+﻿namespace BrainWave.Common.Middlewares;
 
 public class UserMiddleware
 {
@@ -21,10 +17,10 @@ public class UserMiddleware
         {
             var user = new User
             {
-                Id = claimsPrincipal.FindFirst("FirebaseUserClaimType.ID")?.Value ?? string.Empty,
-                Username = claimsPrincipal.FindFirst("FirebaseUserClaimType.USERNAME")?.Value ?? string.Empty,
-                Email = claimsPrincipal.FindFirst("FirebaseUserClaimType.EMAIL")?.Value ?? string.Empty,
-                EmailVerified = bool.TryParse(claimsPrincipal.FindFirst("FirebaseUserClaimType.EMAIL_VERIFIED")?.Value, out bool emailVerifierd) && emailVerifierd,
+                Id = claimsPrincipal.FindFirst(UserClaimType.ID)?.Value ?? string.Empty,
+                Username = claimsPrincipal.FindFirst(UserClaimType.USERNAME)?.Value ?? string.Empty,
+                Email = claimsPrincipal.FindFirst(UserClaimType.EMAIL)?.Value ?? string.Empty,
+                EmailVerified = bool.TryParse(claimsPrincipal.FindFirst(UserClaimType.EMAIL_VERIFIED)?.Value, out bool emailVerified) && emailVerified,
             };
 
             context.ContextData.Add(USER_CONTEXT_KEY, user);

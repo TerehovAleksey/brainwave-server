@@ -7,6 +7,10 @@ internal class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.ToTable("Groups")
             .HasKey(x => x.Id);
 
+        builder.Property(x => x.UserId)
+            .HasMaxLength(200)
+            .IsRequired();
+
         builder.Property(x => x.Name)
             .HasMaxLength(50)
             .IsRequired();

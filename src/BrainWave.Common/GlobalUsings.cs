@@ -1,0 +1,9 @@
+﻿global using HotChocolate;
+global using HotChocolate.Types;
+global using HotChocolate.Types.Descriptors;
+global using HotChocolate.Resolvers;
+global using BrainWave.Common.Middlewares;
+global using BrainWave.Common.Models;
+global using System.Reflection;
+global using System.Runtime.CompilerServices;
+global using System.Security.Claims;

@@ -9,14 +9,17 @@ public class Mutations
     /// </summary>
     /// <param name="tag"></param>
     /// <returns></returns>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Tag>> CreateTagAsync(BookmarksDbContext context, [UseFluentValidation] TagCreateDto tag)
+    public async Task<IQueryable<Tag>> CreateTagAsync(BookmarksDbContext context, [User] User user, [UseFluentValidation] TagCreateDto tag)
     {
         var created = new Tag
         {
             Id = Guid.NewGuid(),
             CreatedDate = DateTime.UtcNow,
             Name = tag.Name,
+            UserId = user.Id,
         };
 
         context.Tags.Add(created);
@@ -31,14 +34,13 @@ public class Mutations
     /// <param name="tag"></param>
     /// <returns></returns>
     /// <exception cref="GraphQLException"></exception>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Tag>> UpdateTagAsync(BookmarksDbContext context, [UseFluentValidation] TagDto tag)
+    public async Task<IQueryable<Tag>> UpdateTagAsync(BookmarksDbContext context, [User] User user, [UseFluentValidation] TagDto tag)
     {
-        var result = await context.Tags.FirstOrDefaultAsync(x => x.Id == tag.Id);
-        if (result is null)
-        {
+        var result = await context.Tags.FirstOrDefaultAsync(x => x.Id == tag.Id && x.UserId == user.Id) ?? 
             throw new GraphQLException("Record not found!");
-        }
 
         result.Name = tag.Name;
         result.EditedDate = DateTime.UtcNow;
@@ -52,10 +54,12 @@ public class Mutations
     /// </summary>
     /// <param name="id">Tag ID</param>
     /// <returns></returns>
-    public async Task<bool> DeleteTagAsync(BookmarksDbContext context, Guid id)
+    [Authorize]
+    [UseUser]
+    public async Task<bool> DeleteTagAsync(BookmarksDbContext context, [User] User user, Guid id)
     {
         var result = await context.Tags
-             .Where(x => x.Id == id)
+             .Where(x => x.Id == id && x.UserId == user.Id)
              .ExecuteDeleteAsync();
 
         return result > 0;
@@ -70,14 +74,17 @@ public class Mutations
     /// </summary>
     /// <param name="group"></param>
     /// <returns></returns>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Group>> CreateGroup(BookmarksDbContext context, [UseFluentValidation] GroupCreateDto group)
+    public async Task<IQueryable<Group>> CreateGroup(BookmarksDbContext context, [User] User user, [UseFluentValidation] GroupCreateDto group)
     {
         var created = new Group
         {
             Id = Guid.NewGuid(),
             CreatedDate = DateTime.UtcNow,
             Name = group.Name,
+            UserId = user.Id,
         };
 
         context.Groups.Add(created);
@@ -92,14 +99,13 @@ public class Mutations
     /// <param name="group"></param>
     /// <returns></returns>
     /// <exception cref="GraphQLException"></exception>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Group>> UpdateGroup(BookmarksDbContext context, [UseFluentValidation] GroupDto group)
+    public async Task<IQueryable<Group>> UpdateGroup(BookmarksDbContext context, [User] User user, [UseFluentValidation] GroupDto group)
     {
-        var result = await context.Groups.FirstOrDefaultAsync(x => x.Id == group.Id);
-        if (result is null)
-        {
+        var result = await context.Groups.FirstOrDefaultAsync(x => x.Id == group.Id && x.UserId == user.Id) ?? 
             throw new GraphQLException("Record not found!");
-        }
 
         result.Name = group.Name;
         result.EditedDate = DateTime.UtcNow;
@@ -113,10 +119,12 @@ public class Mutations
     /// </summary>
     /// <param name="id">Group ID</param>
     /// <returns></returns>
-    public async Task<bool> DeleteGroup(BookmarksDbContext context, Guid id)
+    [Authorize]
+    [UseUser]
+    public async Task<bool> DeleteGroup(BookmarksDbContext context, [User] User user, Guid id)
     {
         var result = await context.Groups
-             .Where(x => x.Id == id)
+             .Where(x => x.Id == id && x.UserId == user.Id)
              .ExecuteDeleteAsync();
 
         return result > 0;
@@ -131,8 +139,10 @@ public class Mutations
     /// </summary>
     /// <param name="bookmark"></param>
     /// <returns></returns>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Bookmark>> CreateBookmarkAsync(BookmarksDbContext context, [UseFluentValidation] BookmarkCreateDto bookmark)
+    public async Task<IQueryable<Bookmark>> CreateBookmarkAsync(BookmarksDbContext context, [User] User user, [UseFluentValidation] BookmarkCreateDto bookmark)
     {
         var result = new Bookmark
         {
@@ -141,7 +151,8 @@ public class Mutations
             Link = bookmark.Link,
             IsPinned = false,
             Order = 0,
-            Rating = 0
+            Rating = 0,
+            UserId = user.Id,
         };
 
         context.Bookmarks.Add(result);
@@ -157,15 +168,17 @@ public class Mutations
     /// <param name="tagId">Tag ID</param>
     /// <returns></returns>
     /// <exception cref="GraphQLException"></exception>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Bookmark>> AddTagToBookmarkAsync(BookmarksDbContext context, Guid id, Guid tagId)
+    public async Task<IQueryable<Bookmark>> AddTagToBookmarkAsync(BookmarksDbContext context, [User] User user, Guid id, Guid tagId)
     {
         var result = await context.Bookmarks
             .Include(x => x.Tags)
-            .FirstOrDefaultAsync(x => x.Id == id) ??
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == user.Id) ??
             throw new GraphQLException(Constants.NotFoundMessage);
 
-        var tag = await context.Tags.FirstOrDefaultAsync(x => x.Id == tagId) ?? 
+        var tag = await context.Tags.FirstOrDefaultAsync(x => x.Id == tagId && x.UserId == user.Id) ?? 
             throw new GraphQLException(Constants.NotFoundMessage);
 
         result.Tags.Add(tag);
@@ -182,15 +195,17 @@ public class Mutations
     /// <param name="tagId">Tag ID</param>
     /// <returns></returns>
     /// <exception cref="GraphQLException"></exception>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Bookmark>> RemoveTagFromBookmarkAsync(BookmarksDbContext context, Guid id, Guid tagId)
+    public async Task<IQueryable<Bookmark>> RemoveTagFromBookmarkAsync(BookmarksDbContext context, [User] User user, Guid id, Guid tagId)
     {
         var result = await context.Bookmarks
             .Include(x => x.Tags)
-            .FirstOrDefaultAsync(x => x.Id == id) ?? 
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == user.Id) ?? 
             throw new GraphQLException(Constants.NotFoundMessage);
 
-        var deleted = result.Tags.Find(x => x.Id == tagId);
+        var deleted = result.Tags.Find(x => x.Id == tagId && x.UserId == user.Id);
         if (deleted is not null)
         {
             result.Tags.Remove(deleted);
@@ -207,16 +222,18 @@ public class Mutations
     /// <param name="id">Bookmark ID</param>
     /// <param name="groupId">Group ID</param>
     /// <returns></returns>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Bookmark>> MoveBookmarkToGroupAsync(BookmarksDbContext context, Guid id, Guid groupId)
+    public async Task<IQueryable<Bookmark>> MoveBookmarkToGroupAsync(BookmarksDbContext context, [User] User user, Guid id, Guid groupId)
     {
-        var groupExist = await context.Groups.AnyAsync(x => x.Id == groupId);
+        var groupExist = await context.Groups.AnyAsync(x => x.Id == groupId && x.UserId == user.Id);
         if (!groupExist)
         {
             throw new GraphQLException(Constants.NotFoundMessage);
         }
 
-        var result = await context.Bookmarks.FirstOrDefaultAsync(x => x.Id == id) ??
+        var result = await context.Bookmarks.FirstOrDefaultAsync(x => x.Id == id && x.UserId == user.Id) ??
             throw new GraphQLException(Constants.NotFoundMessage);
 
         result.GroupId = groupId;
@@ -231,10 +248,12 @@ public class Mutations
     /// </summary>
     /// <param name="id">Bookmark ID</param>
     /// <returns></returns>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Bookmark>> RemoveBookmarkFromGroupAsync(BookmarksDbContext context, Guid id)
+    public async Task<IQueryable<Bookmark>> RemoveBookmarkFromGroupAsync(BookmarksDbContext context, [User] User user, Guid id)
     {
-        var result = await context.Bookmarks.FirstOrDefaultAsync(x => x.Id == id) ?? 
+        var result = await context.Bookmarks.FirstOrDefaultAsync(x => x.Id == id && x.UserId == user.Id) ?? 
             throw new GraphQLException(Constants.NotFoundMessage);
 
         result.GroupId = null;
@@ -249,10 +268,12 @@ public class Mutations
     /// </summary>
     /// <param name="id">Bookmark ID</param>
     /// <returns></returns>
-    public async Task<bool> DeleteBookmarkAsync(BookmarksDbContext context, Guid id)
+    [Authorize]
+    [UseUser]
+    public async Task<bool> DeleteBookmarkAsync(BookmarksDbContext context, [User] User user, Guid id)
     {
         var result = await context.Bookmarks
-            .Where(x => x.Id == id)
+            .Where(x => x.Id == id && x.UserId == user.Id)
             .ExecuteDeleteAsync();
 
         return result > 0;
@@ -264,10 +285,12 @@ public class Mutations
     /// <param name="bookmark"></param>
     /// <returns></returns>
     /// <exception cref="GraphQLException"></exception>
+    [Authorize]
+    [UseUser]
     [UseProjection]
-    public async Task<IQueryable<Bookmark>> EditBookmarkAsync(BookmarksDbContext context, [UseFluentValidation] BookmarkEditDto bookmark)
+    public async Task<IQueryable<Bookmark>> EditBookmarkAsync(BookmarksDbContext context, [User] User user, [UseFluentValidation] BookmarkEditDto bookmark)
     {
-        var result = await context.Bookmarks.FirstOrDefaultAsync(x => x.Id == bookmark.Id) ??
+        var result = await context.Bookmarks.FirstOrDefaultAsync(x => x.Id == bookmark.Id && x.UserId == user.Id) ??
             throw new GraphQLException(Constants.NotFoundMessage);
 
         if (bookmark.Link != null)

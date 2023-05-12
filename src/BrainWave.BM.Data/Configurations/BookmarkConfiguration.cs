@@ -7,6 +7,10 @@ internal class BookmarkConfiguration : IEntityTypeConfiguration<Bookmark>
         builder.ToTable("Bookmarks")
             .HasKey(x => x.Id);
 
+        builder.Property(x => x.UserId)
+            .HasMaxLength(200)
+            .IsRequired();
+
         builder.Property(x => x.Link)
             .HasMaxLength(200)
             .IsRequired();

@@ -15,6 +15,13 @@ try
                 .Enrich.FromLogContext()
                 .WriteTo.Console());
 
+    //Firebase configuration
+    var firebaseConfigPath = builder.Configuration.GetValue<string>("FirebaseConfig");
+    builder.Services.AddSingleton(FirebaseApp.Create(new AppOptions()
+    {
+        Credential = GoogleCredential.FromFile(firebaseConfigPath),
+    }));
+
     //Application Services
     builder.Services.AddBmValidation();
 
@@ -22,8 +29,9 @@ try
     var connectionString = builder.Configuration.GetConnectionString("BookmarksDb");
     builder.Services.AddPooledDbContextFactory<BookmarksDbContext>(opt => opt.UseSqlServer(connectionString));
 
-    //GraphQL
+    //GraphQL configuration
     builder.Services.AddGraphQLServer()
+        .AddAuthorization()
         //.AddMaxExecutionDepthRule(4)
         .RegisterDbContext<BookmarksDbContext>(DbContextKind.Pooled)
         .AddQueryType<Query>()
@@ -36,6 +44,11 @@ try
             opt.UseDefaultErrorMapper();
         });
 
+    //Authentication
+    builder.Services.AddFirebaseAuthentication();
+
+    builder.Services.AddAuthorization();
+
     var app = builder.Build();
 
     //Init and Seed Databases
@@ -45,6 +58,8 @@ try
 
     app.UseHttpsRedirection();
     app.UseSerilogRequestLogging();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.MapGraphQL();
     app.Run();
 

@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /src/BrainWaveAPI/appsettings.Production.json
 /src/BrainWaveAPI/appsettings.Development.json
+/src/BrainWaveAPI/firebase.json
